@@ -1,17 +1,15 @@
 const fastify = require('fastify')()
+const PORT = process.env.PORT || 5000
 
 const inventoryRoutes = require('./routes/inventory')
 fastify.register(inventoryRoutes)
 
-const start = async () => {
-  try {
-    await fastify.listen(5000)
-    fastify.log.info(`server listening on ${fastify.server.address().port}`)
-    console.log(fastify.printRoutes())
-  } catch (err) {
+fastify.listen(PORT, function (err) {
+  if (err) {
     fastify.log.error(err)
     process.exit(1)
   }
-}
 
-start()
+  fastify.log.info(`server listening on ${fastify.server.address().port}`)
+  console.log(fastify.printRoutes())
+})
