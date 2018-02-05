@@ -3,10 +3,10 @@ const uuidv1 = require('uuid/v1')
 
 async function inventoryRoutes(fastify, options) {
   fastify.route({
-    method: '',
-    url: '',
+    method: 'GET',
+    url: '/api-test',
     handler: async (request, reply) => {
-
+      reply.send({hello: 'world'})
     }
   })
 }
