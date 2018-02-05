@@ -1,0 +1,24 @@
+{
+  "name": "pob-hdb-api",
+  "version": "1.0.0",
+  "description": "POB HDB API",
+  "main": "init-db.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackwitus/pob-hdb-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hackwitus/pob-hdb-api/issues"
+  },
+  "homepage": "https://github.com/hackwitus/pob-hdb-api#readme",
+  "dependencies": {
+    "dotenv": "^5.0.0",
+    "fastify": "^0.43.0",
+    "harperdb-connect": "^1.0.0"
+  }
+}
