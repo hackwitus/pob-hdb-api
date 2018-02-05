@@ -2,9 +2,9 @@
   "name": "pob-hdb-api",
   "version": "1.0.0",
   "description": "POB HDB API",
-  "main": "init-db.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
