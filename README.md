@@ -1,4 +1,67 @@
-POB HDB API
+# POB HDB API
+
+## Useful Routes and How To Use Them
+
+### Insert a new Inventory item
+```js
+{
+  method: 'POST',
+  url: 'http://db.url/inventory/new',
+  headers: {
+    "content-type": "application/json"
+  }
+  body: {
+    name: 'Arduino Uno',
+    description: 'Cool gadget thing'
+  },
+  json: true
+}
+```
+### Insert a new Transaction
+```js
+{
+  method: 'POST',
+  url: 'http://db.url/transactions/new',
+  headers: {
+    "content-type": "application/json"
+  }
+  body: {
+    customer: {
+      "name": "Ethan Arrowood",
+      "email": "arrowoode@wit.edu",
+      "phoneNumber": "609-276-4043"
+    },
+    item: "<id of inventory item>",
+    collateral: "Student ID"
+  },
+  json: true
+}
+```
+### Get all Inventory Items
+```js
+{
+  method: 'GET',
+  url: 'http://db.url/inventory',
+  headers: {
+    "content-type": "application/json"
+  },
+  json: true
+}
+```
+### Get all Transaction Items
+```js
+{
+  method: 'GET',
+  url: 'http://db.url/transactions',
+  headers: {
+    "content-type": "application/json"
+  },
+  json: true
+}
+```
+
+## Messy Dev Documentation
+Everything below is just pieces used during development. Lots of errors and not reliable. Direct all 'how do i' questions to Ethan 
 
 Inventory Item Record
 ```
