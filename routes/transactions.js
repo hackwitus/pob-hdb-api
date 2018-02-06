@@ -1,4 +1,4 @@
-const { request, getID, getData } = require('./utility')
+const { requestDB, getID, getDate } = require('./utility')
 
 async function transactionsRoutes(fastify, options) {
 
@@ -6,7 +6,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions',
     handler: async (request, reply) => {
-      const getTransactions = await request({
+      const getTransactions = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -24,7 +24,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions/:id',
     handler: async (request, reply) => {
-      const getTransactions = await request({
+      const getTransactions = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -42,7 +42,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions/customer/:phoneNumber',
     handler: async (request, reply) => {
-      const getTransactions = await request({
+      const getTransactions = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -60,7 +60,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions/item/:id',
     handler: async (request, reply) => {
-      const getTransactions = await request({
+      const getTransactions = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -82,17 +82,16 @@ async function transactionsRoutes(fastify, options) {
       const newTransactionId = getID()
 
       try {
-        const lookUpCustomer = await request({
-          "operation": "search_by_value",
+        const lookUpCustomer = await requestDB({
+          "operation": "search_by_hash",
           "schema": "pob",
           "table": "customers",
           "hash_attribute": "phoneNumber",
-          "search_attribute": "phoneNumber",
-          "search_value": request.body.customer.phoneNumber,
-          "get_attributes": ["name", "email", "phoneNumer", "transactionHistory"]
+          "hash_values":[ request.body.customer.phoneNumber ],
+          "get_attributes": ["name", "email", "phoneNumber", "transactionHistory"]
         })
   
-        const lookUpInventory = await request({
+        const lookUpInventory = await requestDB({
           "operation": "search_by_value",
           "schema": "pob",
           "table": "inventory",
@@ -102,7 +101,12 @@ async function transactionsRoutes(fastify, options) {
           "get_attributes": ["id", "name", "available"]
         })
 
-        const updateInventory = await request({
+        const currentTransactionHistory = lookUpInventory[0].transactionHistory
+        const newTransactionHistory = currentTransactionHistory ?
+          [ ...currentTransactionHistory, newTransactionId ]
+          : [ newTransactionId ]
+
+        const updateInventory = await requestDB({
           "operation": "update",
           "schema": "pob",
           "table": "inventory",
@@ -111,7 +115,7 @@ async function transactionsRoutes(fastify, options) {
               "id": request.body.item,
               "available": "false",
               "currentTransaction": newTransactionId,
-              "transactionHistory": [ ...lookUpInventory[0].transactionHistory, newTransactionId ]
+              "transactionHistory": newTransactionHistory
             }
           ]
         })
@@ -119,7 +123,7 @@ async function transactionsRoutes(fastify, options) {
         let newCustomer, updateCustomer
   
         if ( lookUpCustomer.length === 0 ) {
-          newCustomer = await request({
+          newCustomer = await requestDB({
             "operation": "insert",
             "schema": "pob",
             "table": "customers",
@@ -128,12 +132,12 @@ async function transactionsRoutes(fastify, options) {
                 "name": request.body.customer.name,
                 "email": request.body.customer.email,
                 "phoneNumber": request.body.customer.phoneNumber,
-                "transactionHistory": []
+                "transactionHistory": [newTransactionId]
               }
             ]
           })
         } else {
-          updateCustomer = await request({
+          updateCustomer = await requestDB({
             "operation": "update",
             "schema": "pob",
             "table": "customers",
@@ -146,7 +150,7 @@ async function transactionsRoutes(fastify, options) {
           })
         }
         
-        const payload = await request({
+        const payload = await requestDB({
           "operation": "insert",
           "schema": "pob",
           "table": "transactions",
@@ -154,7 +158,7 @@ async function transactionsRoutes(fastify, options) {
             {
               "id": newTransactionId,
               "item": request.body.item,
-              "customer": request.body.customer,
+              "customer": request.body.customer.phoneNumber,
               "collateral": request.body.collateral,
               "timeBorrowed": getDate(),
               "timeReturned": null
@@ -162,7 +166,7 @@ async function transactionsRoutes(fastify, options) {
           ]
         })
 
-        return paylod
+        return payload
       } catch (error) {
         return error
       }
@@ -174,17 +178,17 @@ async function transactionsRoutes(fastify, options) {
     url: '/transactions/update',
     handler: async (request, reply) => {
       try {
-        const lookUpTransaction = await request({
+        const lookUpTransaction = await requestDB({
           "operation": "search_by_value",
           "schema": "pob",
-          "table": "transaction",
+          "table": "transactions",
           "hash_attribute": "id",
           "search_attribute": "id",
           "search_value": request.body.transaction,
           "get_attributes": ["id", "item"]
         })
 
-        const lookUpInventory = await request({
+        const lookUpInventory = await requestDB({
           "operation": "search_by_value",
           "schema": "pob",
           "table": "inventory",
@@ -194,19 +198,20 @@ async function transactionsRoutes(fastify, options) {
           "get_attributes": ["id", "name", "available"]
         })
 
-        const updateInventory = await request({
+        const updateInventory = await requestDB({
           "operation": "update",
           "schema": "pob",
           "table": "inventory",
           "records": [
             {
               "id": lookUpTransaction[0].item,
+              currentTransaction: null,
               available: "true",
             }
           ]
         })
 
-        const updateTransaction = await request({
+        const updateTransaction = await requestDB({
           "operation": "update",
           "schema": "pob",
           "table": "transactions",
@@ -230,12 +235,14 @@ async function transactionsRoutes(fastify, options) {
     url: '/transactions/delete',
     handler: async (request, reply) => {
 
-      const updateTransaction = await request({
+      const deleteTransaction = await requestDB({
         "operation": "delete",
         "schema": "pob",
         "table": "transactions",
-        "hash_records": [request.body.transaction]
+        "hash_values": [request.body.transaction]
       })
+
+      return deleteTransaction
     }
   })
 }

@@ -1,4 +1,4 @@
-const { request, getID, getData } = require('./utility')
+const { requestDB, getID, getData } = require('./utility')
 
 async function customersRoutes(fastify, options) {
 
@@ -6,14 +6,14 @@ async function customersRoutes(fastify, options) {
     method: 'GET',
     url: '/customers',
     handler: async (request, reply) => {
-      const payload = await request({
+      const payload = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "customers",
         "hash_attribute": "phoneNumber",
-        "search_attribute": "phonerNumber",
+        "search_attribute": "phoneNumber",
         "search_value": "*",
-        "get_attributes": ["name", "email", "phoneNumer", "transactionHistory"]
+        "get_attributes": ["name", "email", "phoneNumber", "transactionHistory"]
       })
 
       return payload
@@ -24,14 +24,14 @@ async function customersRoutes(fastify, options) {
     method: 'GET',
     url: '/customers/:phoneNumber',
     handler: async (request, reply) => {
-      const payload = await request({
+      const payload = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "customers",
         "hash_attribute": "phoneNumber",
         "search_attribute": "phoneNumber",
         "search_value": request.params.phoneNumber,
-        "get_attributes": ["name", "email", "phoneNumer", "transactionHistory"]
+        "get_attributes": ["name", "email", "phoneNumber", "transactionHistory"]
       })
 
       return payload
@@ -42,7 +42,7 @@ async function customersRoutes(fastify, options) {
     method: 'POST',
     url: '/customers/new',
     handler: async (request, reply) => {
-      const payload = await request({
+      const payload = await requestDB({
         "operation": "insert",
         "schema": "pob",
         "table": "customers",
@@ -64,7 +64,7 @@ async function customersRoutes(fastify, options) {
     method: 'POST',
     url: '/customers/update',
     handler: async (request, reply) => {
-      const lookUpCustomer = await request({
+      const lookUpCustomer = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "customers",
@@ -74,7 +74,7 @@ async function customersRoutes(fastify, options) {
         "get_attributes": ["name", "email", "phoneNumer"]
       })
 
-      const updateCustomer = await request({
+      const updateCustomer = await requestDB({
         "operation": "update",
         "schema": "pob",
         "table": "customers",
@@ -95,7 +95,7 @@ async function customersRoutes(fastify, options) {
     method: 'POST',
     url: '/customers/delete',
     handler: async (request, reply) => {
-      const deleteCustomer = await request({
+      const deleteCustomer = await requestDB({
         "operation": "delete",
         "schema": "pob",
         "table": "customers",

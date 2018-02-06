@@ -1,4 +1,4 @@
-const { request, getID, getData } = require('./utility')
+const { requestDB, getID, getData } = require('./utility')
 
 async function inventoryRoutes(fastify, options) {
 
@@ -6,7 +6,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory',
     handler: async (request, reply) => {
-      const getInventory = await request({
+      const getInventory = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -24,7 +24,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory/:id',
     handler: async (request, reply) => {
-      const getInventory = await request({
+      const getInventory = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -42,7 +42,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory/available',
     handler: async (request, reply) => {
-      const getInventory = await request({
+      const getInventory = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -60,7 +60,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory/current_transaction/:id',
     handler: async (request, reply) => {
-      const getInventory = await request({
+      const getInventory = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -78,7 +78,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'POST',
     url: '/inventory/new',
     handler: async (request, reply) => {
-      const newInventory = await request({
+      const newInventory = await requestDB({
         "operation": "insert",
         "schema": "pob",
         "table": "inventory",
@@ -102,7 +102,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'POST',
     url: '/inventory/update',
     handler: async (request, reply) => {
-      const currentRecord = await request({
+      const currentRecord = await requestDB({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -112,7 +112,7 @@ async function inventoryRoutes(fastify, options) {
         "get_attributes": ["name", "id", "description"]
       })
 
-      const updateInventory = await request({
+      const updateInventory = await requestDB({
         "operation": "update",
         "schema": "pob",
         "table": "inventory",
@@ -133,8 +133,8 @@ async function inventoryRoutes(fastify, options) {
     method: 'POST',
     url: '/inventory/delete',
     handler: async (request, reply) => {
-      const deleteInventory = await request({
-        "operation": "insert",
+      const deleteInventory = await requestDB({
+        "operation": "delete",
         "schema": "pob",
         "table": "inventory",
         "hash_values": [ request.body.id ] 

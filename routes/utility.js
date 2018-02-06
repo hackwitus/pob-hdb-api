@@ -3,7 +3,7 @@ const uuidv1 = require('uuid/v1')
 const moment = require('moment')
 require('dotenv').config()
 
-module.exports.request = function ({ options }) {
+function requestDB(options) {
   return rp({
     method: 'POST',
     url: process.env.HDB_URL,
@@ -11,15 +11,19 @@ module.exports.request = function ({ options }) {
       "content-type":"application/json",
       "authorization": 'Basic ' + new Buffer(process.env.HDB_USERNAME + ':' + process.env.HDB_PASSWORD).toString('base64')
     },
-    body: options,
+    body: options || {},
     json: true
   })
 }
 
-module.exports.getID = function() {
+function getID() {
   return uuidv1()
 }
 
-module.exports.getDate = function() {
+function getDate() {
   return moment().format()
 }
+
+module.exports.requestDB = requestDB
+module.exports.getID = getID
+module.exports.getDate = getDate
