@@ -28,8 +28,9 @@ hash_attribute: id
 
 Customer Record
 ```
-hash_attribute: phoneNumber
+hash_attribute: id
 {
+  id: (uuid/v1) String,
   name: String,
   email: String,
   phoneNumber: String,
@@ -53,13 +54,11 @@ const date = moment().format()
 ## REST API Endpoints
 ## GET
 - /inventory
-- /inventory?id={id}&id={id}
 - /inventory/:id
 - /inventory/available
-- /inventory/transaction
+- /inventory/current_transaction
 
 - /transactions
-- /transactions?id={id}&id={id}
 - /transactions/:id
 - /transactions/:customer
 - /transactions/:item
