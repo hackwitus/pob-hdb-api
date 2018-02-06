@@ -1,4 +1,67 @@
-POB HDB API
+# POB HDB API
+
+## Useful Routes and How To Use Them
+
+### Insert a new Inventory item
+```js
+{
+  method: 'POST',
+  url: 'http://db.url/inventory/new',
+  headers: {
+    "content-type": "application/json"
+  }
+  body: {
+    name: 'Arduino Uno',
+    description: 'Cool gadget thing'
+  },
+  json: true
+}
+```
+### Insert a new Transaction
+```js
+{
+  method: 'POST',
+  url: 'http://db.url/transactions/new',
+  headers: {
+    "content-type": "application/json"
+  }
+  body: {
+    customer: {
+      "name": "Ethan Arrowood",
+      "email": "arrowoode@wit.edu",
+      "phoneNumber": "609-276-4043"
+    },
+    item: "<id of inventory item>",
+    collateral: "Student ID"
+  },
+  json: true
+}
+```
+### Get all Inventory Items
+```js
+{
+  method: 'GET',
+  url: 'http://db.url/inventory',
+  headers: {
+    "content-type": "application/json"
+  },
+  json: true
+}
+```
+### Get all Transaction Items
+```js
+{
+  method: 'GET',
+  url: 'http://db.url/transactions',
+  headers: {
+    "content-type": "application/json"
+  },
+  json: true
+}
+```
+
+## Messy Dev Documentation
+Everything below is just pieces used during development. Lots of errors and not reliable. Direct all 'how do i' questions to Ethan 
 
 Inventory Item Record
 ```
@@ -6,8 +69,8 @@ hash_attribute: id
 {
   id: (uuid/v1) String,
   name: String,
+  description: String,
   available: Boolean,
-  popularityScore: (uuid/v1) String,
   currentTransaction: (uuid/v1) String,
   transactionHistory: (Transaction:hash_attribute) Array
 }
@@ -52,32 +115,88 @@ const date = moment().format()
 
 ## REST API Endpoints
 ## GET
-- /inventory
-- /inventory?id={id}&id={id}
-- /inventory/:id
+- /inventory `/inventory`
+  - get all items in the inventory
+  - Example `/inventory`:
+  ```js
+    [
+      {
+        "id": "6fa2f6ba-0ab1-11e8-ba89-0ed5f89f718b", 
+        "name": "Arduino Uno",
+        "available": "true",
+        "currentTransaction": null,
+        "transactionHistory": []
+      },
+      {
+        "id": "2ccdf25e-0ab1-11e8-ba89-0ed5f89f718b", 
+        "name": "Raspberry Pi 3",
+        "available": "true",
+        "currentTransaction": null,
+        "transactionHistory": []
+      },
+      ...
+    ]
+  ```
+- /inventory/:id 
+  - get a singular item specified by the unique `id`
+  - Example `/inventory/6fa2f6ba-0ab1-11e8-ba89-0ed5f89f718b`:
+  ```js
+    [
+      {
+        "id": "6fa2f6ba-0ab1-11e8-ba89-0ed5f89f718b", 
+        "name": "Arduino",
+        "available": "true",
+        "currentTransaction": null,
+        "transactionHistory": []
+      }
+    ]
+  ```
 - /inventory/available
-- /inventory/transaction
-
+  - get all available items
+- /inventory/current_transaction/:id
+  - get an item with a specified transaction `id`
 - /transactions
-- /transactions?id={id}&id={id}
+  - get all transactions
 - /transactions/:id
-- /transactions/:customer
-- /transactions/:item
-
-- /customers/:id
+  - get transaction specified by the unique `id`
+- /transactions/customer/:phoneNumber
+  - get transaction(s) with a specified customer `phoneNumber`
+- /transactions/item/:id
+  - get transaction(s) with a specified item `id`
+- /customers/
+  - get all customers
+- /customers/:phoneNumber
+  - get customer specified by the unique `phoneNumber`
 
 ## POST
 - /inventory/new
+  - creates new `inventory` record
 - /inventory/update
+  - updates `inventory:name`
+  - updates `inventory:description`
 - /inventory/delete
-
+  - deletes `inventory:id`
 - /transactions/new
+  - creates new `transactions` record
+  - updates `inventory:available`
+  - updates `inventory:currentTransaction`
+  - updates `inventory:transactionHistory`
+  - if customer exists:
+    - creates new `customer`
+  - else:
+    - updates `customer:transactionHistory`
 - /transactions/update
+  - updates `transaction:timeReturned`
+  - updates `inventory:available`
 - /transactions/delete
-
+  - deletes `transaction:id`
 - /customers/new
+  - creates new `customers`
 - /customers/update
+  - updates `customer:name`
+  - updates `customer:email`
 - /customers/delete
+  - deletes `customer:id`
 
 ## DB Requests
 
@@ -109,7 +228,7 @@ Create Tables
   "operation": "create_table",
   "schema": "pob",
   "table": "customers",
-  "hash_attribute": "phoneNumber"
+  "hash_attribute": "id"
 }
 ```
 
@@ -123,6 +242,7 @@ Insert Inventory Item
     {
       "id": "2ccdf25e-0ab1-11e8-ba89-0ed5f89f718b",
       "name": "Raspberry Pi 3",
+      "description": "Mini computer thingy majigy"
       "available": "true",
       "currentTransaction": null,
       "transactionHistory": []
