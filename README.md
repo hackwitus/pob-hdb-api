@@ -64,6 +64,7 @@ const date = moment().format()
 - /transactions/:item
 
 - /customers/:id
+- /customers/phone_number/:phoneNumber
 
 ## POST
 - /inventory/new
