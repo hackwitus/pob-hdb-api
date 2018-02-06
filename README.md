@@ -6,6 +6,7 @@ hash_attribute: id
 {
   id: (uuid/v1) String,
   name: String,
+  description: String,
   available: Boolean,
   currentTransaction: (uuid/v1) String,
   transactionHistory: (Transaction:hash_attribute) Array
@@ -131,7 +132,6 @@ const date = moment().format()
 - /customers/update
   - updates `customer:name`
   - updates `customer:email`
-  - updates `customer:phoneNumber`
 - /customers/delete
   - deletes `customer:id`
 

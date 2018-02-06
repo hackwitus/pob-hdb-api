@@ -6,17 +6,17 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getInventory = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
         "hash_attribute": "id",
         "search_attribute": "id",
         "search_value":"*",
-        "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
+        "get_attributes": ["id", "name", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
-      return payload
+      return getInventory
     }
   })
 
@@ -24,7 +24,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory/:id',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getInventory = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -34,7 +34,7 @@ async function inventoryRoutes(fastify, options) {
         "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
-      return payload
+      return getInventory
     }
   })
   
@@ -42,7 +42,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory/available',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getInventory = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -52,7 +52,7 @@ async function inventoryRoutes(fastify, options) {
         "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
-      return payload
+      return getInventory
     }
   })
 
@@ -60,7 +60,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'GET',
     url: '/inventory/current_transaction/:id',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getInventory = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "inventory",
@@ -70,7 +70,7 @@ async function inventoryRoutes(fastify, options) {
         "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
-      return payload
+      return getInventory
     }
   })
 
@@ -78,7 +78,7 @@ async function inventoryRoutes(fastify, options) {
     method: 'POST',
     url: '/inventory/new',
     handler: async (request, reply) => {
-      const payload = await request({
+      const newInventory = await request({
         "operation": "insert",
         "schema": "pob",
         "table": "inventory",
@@ -93,6 +93,8 @@ async function inventoryRoutes(fastify, options) {
           }
         ]
       })
+
+      return newInventory
     }
   })
 
@@ -110,7 +112,7 @@ async function inventoryRoutes(fastify, options) {
         "get_attributes": ["name", "id", "description"]
       })
 
-      const payload = await request({
+      const updateInventory = await request({
         "operation": "update",
         "schema": "pob",
         "table": "inventory",
@@ -122,6 +124,8 @@ async function inventoryRoutes(fastify, options) {
           }
         ]
       })
+
+      return updateInventory
     }
   })
 
@@ -129,12 +133,14 @@ async function inventoryRoutes(fastify, options) {
     method: 'POST',
     url: '/inventory/delete',
     handler: async (request, reply) => {
-      const payload = await request({
+      const deleteInventory = await request({
         "operation": "insert",
         "schema": "pob",
         "table": "inventory",
         "hash_values": [ request.body.id ] 
       })
+
+      return deleteInventory
     }
   })
 }

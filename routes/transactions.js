@@ -6,7 +6,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getTransactions = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -16,7 +16,7 @@ async function transactionsRoutes(fastify, options) {
         "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
       })
 
-      return payload
+      return getTransactions
     }
   })
 
@@ -24,7 +24,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions/:id',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getTransactions = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -34,7 +34,7 @@ async function transactionsRoutes(fastify, options) {
         "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
       })
 
-      return payload
+      return getTransactions
     }
   })
 
@@ -42,7 +42,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions/customer/:phoneNumber',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getTransactions = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -52,7 +52,7 @@ async function transactionsRoutes(fastify, options) {
         "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
       })
 
-      return payload
+      return getTransactions
     }
   })
   
@@ -60,7 +60,7 @@ async function transactionsRoutes(fastify, options) {
     method: 'GET',
     url: '/transactions/item/:id',
     handler: async (request, reply) => {
-      const payload = await request({
+      const getTransactions = await request({
         "operation": "search_by_value",
         "schema": "pob",
         "table": "transactions",
@@ -70,7 +70,7 @@ async function transactionsRoutes(fastify, options) {
         "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
       })
 
-      return payload
+      return getTransactions
     }
   })
 
@@ -222,6 +222,20 @@ async function transactionsRoutes(fastify, options) {
       } catch (error) {
         return error
       }
+    }
+  })
+
+  fastify.route({
+    method: 'POST',
+    url: '/transactions/delete',
+    handler: async (request, reply) => {
+
+      const updateTransaction = await request({
+        "operation": "delete",
+        "schema": "pob",
+        "table": "transactions",
+        "hash_records": [request.body.transaction]
+      })
     }
   })
 }
