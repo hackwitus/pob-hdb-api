@@ -2,7 +2,12 @@ const fastify = require('fastify')()
 const PORT = process.env.PORT || 5000
 
 const inventoryRoutes = require('./routes/inventory')
-fastify.register(inventoryRoutes)
+const transactionsRoutes = require('./routes/transactions')
+const customersRoutes = require('./routes/customers')
+fastify
+  .register(inventoryRoutes)
+  .register(transactionsRoutes)
+  .register(customersRoutes)
 
 fastify.listen(PORT, '0.0.0.0', function (err) {
   if (err) {

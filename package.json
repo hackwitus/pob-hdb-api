@@ -19,6 +19,7 @@
   "dependencies": {
     "dotenv": "^5.0.0",
     "fastify": "^0.43.0",
-    "harperdb-connect": "^1.0.0"
+    "harperdb-connect": "^1.0.0",
+    "moment": "^2.20.1"
   }
 }

@@ -1,25 +1,6 @@
-const rp = require('request-promise-native')
-const uuidv1 = require('uuid/v1')
+const { request, getID, getData } = require('./utility')
 
 async function inventoryRoutes(fastify, options) {
-  function request({ options }) {
-    return rp({
-      method: 'POST',
-      url: process.env.HDB_URL,
-      headers: {
-        "content-type":"application/json",
-        "authorization": 'Basic ' + new Buffer(process.env.HDB_USERNAME + ':' + process.env.HDB_PASSWORD).toString('base64')
-      },
-      body: options,
-      json: true
-    })
-  }
-  function getID() {
-    return uuidv1()
-  }
-  function getDate() {
-    return moment().format()
-  }
 
   fastify.route({
     method: 'GET',
@@ -32,7 +13,7 @@ async function inventoryRoutes(fastify, options) {
         "hash_attribute": "id",
         "search_attribute": "id",
         "search_value":"*",
-        "get_attributes": ["name", "id", "available", "currentTransaction", "transactionHistory"]
+        "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
       return payload
@@ -50,7 +31,7 @@ async function inventoryRoutes(fastify, options) {
         "hash_attribute": "id",
         "search_attribute": "id",
         "search_value": request.params.id,
-        "get_attributes": ["name", "id", "available", "currentTransaction", "transactionHistory"]
+        "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
       return payload
@@ -68,7 +49,7 @@ async function inventoryRoutes(fastify, options) {
         "hash_attribute": "id",
         "search_attribute": "available",
         "search_value": "true",
-        "get_attributes": ["name", "id", "available", "currentTransaction", "transactionHistory"]
+        "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
       return payload
@@ -86,7 +67,7 @@ async function inventoryRoutes(fastify, options) {
         "hash_attribute": "id",
         "search_attribute": "currentTransaction",
         "search_value": request.params.id,
-        "get_attributes": ["name", "id", "available", "currentTransaction", "transactionHistory"]
+        "get_attributes": ["name", "id", "description", "available", "currentTransaction", "transactionHistory"]
       })
 
       return payload
@@ -94,110 +75,66 @@ async function inventoryRoutes(fastify, options) {
   })
 
   fastify.route({
-    method: 'GET',
-    url: '/transactions',
+    method: 'POST',
+    url: '/inventory/new',
     handler: async (request, reply) => {
       const payload = await request({
+        "operation": "insert",
+        "schema": "pob",
+        "table": "inventory",
+        "records": [
+          {
+            "id": getID(),
+            "name": request.body.name,
+            "description": request.body.description || "Default description",
+            "available": "true",
+            "currentTransaction": null,
+            "transactionHistory": []
+          }
+        ]
+      })
+    }
+  })
+
+  fastify.route({
+    method: 'POST',
+    url: '/inventory/update',
+    handler: async (request, reply) => {
+      const currentRecord = await request({
         "operation": "search_by_value",
         "schema": "pob",
-        "table": "transactions",
+        "table": "inventory",
         "hash_attribute": "id",
         "search_attribute": "id",
-        "search_value": "*",
-        "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
+        "search_value": request.body.id,
+        "get_attributes": ["name", "id", "description"]
       })
 
-      return payload
+      const payload = await request({
+        "operation": "update",
+        "schema": "pob",
+        "table": "inventory",
+        "records": [
+          {
+            "id": request.body.id,
+            "name": request.body.name || currentRecord[0].name,
+            "description": request.body.description || currentRecord[0].description,
+          }
+        ]
+      })
     }
   })
 
   fastify.route({
-    method: 'GET',
-    url: '/transactions/:id',
+    method: 'POST',
+    url: '/inventory/delete',
     handler: async (request, reply) => {
       const payload = await request({
-        "operation": "search_by_value",
+        "operation": "insert",
         "schema": "pob",
-        "table": "transactions",
-        "hash_attribute": "id",
-        "search_attribute": "id",
-        "search_value": request.params.id,
-        "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
+        "table": "inventory",
+        "hash_values": [ request.body.id ] 
       })
-
-      return payload
-    }
-  })
-
-  fastify.route({
-    method: 'GET',
-    url: '/transactions/customer/:id',
-    handler: async (request, reply) => {
-      const payload = await request({
-        "operation": "search_by_value",
-        "schema": "pob",
-        "table": "transactions",
-        "hash_attribute": "id",
-        "search_attribute": "customer",
-        "search_value": request.params.id,
-        "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
-      })
-
-      return payload
-    }
-  })
-  
-  fastify.route({
-    method: 'GET',
-    url: '/transactions/item/:id',
-    handler: async (request, reply) => {
-      const payload = await request({
-        "operation": "search_by_value",
-        "schema": "pob",
-        "table": "transactions",
-        "hash_attribute": "id",
-        "search_attribute": "item",
-        "search_value": request.params.id,
-        "get_attributes": ["id", "item", "customer", "collateral", "timeBorrowed", "timeReturned"]
-      })
-
-      return payload
-    }
-  })
-
-  fastify.route({
-    method: 'GET',
-    url: '/customers/:id',
-    handler: async (request, reply) => {
-      const payload = await request({
-        "operation": "search_by_value",
-        "schema": "pob",
-        "table": "customers",
-        "hash_attribute": "id",
-        "search_attribute": "id",
-        "search_value": request.params.id,
-        "get_attributes": ["id", "name", "email", "phoneNumer", "transactionHistory"]
-      })
-
-      return payload
-    }
-  })
-
-  fastify.route({
-    method: 'GET',
-    url: '/customers/phone_number/:phoneNumber',
-    handler: async (request, reply) => {
-      const payload = await request({
-        "operation": "search_by_value",
-        "schema": "pob",
-        "table": "customers",
-        "hash_attribute": "id",
-        "search_attribute": "phoneNumber",
-        "search_value": request.params.phoneNumber,
-        "get_attributes": ["id", "name", "email", "phoneNumer", "transactionHistory"]
-      })
-
-      return payload
     }
   })
 }
