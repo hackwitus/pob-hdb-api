@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/hackwitus/pob-hdb-api#readme",
   "dependencies": {
+    "cors": "^2.8.4",
     "dotenv": "^5.0.0",
     "fastify": "^0.43.0",
     "harperdb-connect": "^1.0.0",
