@@ -1,5 +1,9 @@
 # POB HDB API
 
+Check out [`demo.md`](Demo.md) for a textual walkthrough of the API
+
+You can also watch a video [here](https://www.youtube.com/watch?v=77gzzedRqkg)
+
 ## Useful Routes and How To Use Them
 
 ### Insert a new Inventory item
@@ -280,7 +284,7 @@ Insert Customer
     {
       "name": "Ethan Arrowood",
       "email": "ethan.arrowood@gmail.com",
-      "phoneNumber": "609-276-4043",
+      "phoneNumber": "123-456-7890",
       "transactionHistory": []
     }
   ]
