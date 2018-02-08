@@ -99,7 +99,7 @@ async function customersRoutes(fastify, options) {
         "operation": "delete",
         "schema": "pob",
         "table": "customers",
-        "hash_records": [request.body.phoneNumber]
+        "hash_values": [request.body.phoneNumber]
       })
 
       return deleteCustomer
