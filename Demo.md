@@ -122,23 +122,24 @@ Customer records use their phoneNumber as a hash attribute. This lets our API be
 
 ## What's Next?
 1. Add authentication system.
-  - All applications can benefit from a secure authentication system. A good solution would be Auth0's JSON Web Token service.
-  - We would use these JWTs to authenticate API requests
+    - All applications can benefit from a secure authentication system. A good solution would be Auth0's JSON Web Token service.
+    - We would use these JWTs to authenticate API requests
 2. Secure the database
-  - At the moment, the API uses an administrator account to interact with the database.
-  - Replace that with a limited profile and specified read/write configurations.
+    - At the moment, the API uses an administrator account to interact with the database.
+    - Replace that with a limited profile and specified read/write configurations.
 3. Add JSON Object Schemas to API
-  - Fastify is really fast and can be even faster when JSON Schemas are added to routes
-  - These schemas will also act as a verification layer to make sure the request contains valid data.
+    - Fastify is really fast and can be even faster when JSON Schemas are added to routes
+    - These schemas will also act as a verification layer to make sure the request contains valid data.
 4. Add multiple item transactions. 
-  - For simplicity we built this API with a one-to-one interaction model. Adding multiple items to a transaction would make searching for specific records slightly harder but would increase the usability of our application.
+    - For simplicity we built this API with a one-to-one interaction model. Adding multiple items to a transaction would make searching for specific records slightly harder but would increase the usability of our application.
 
 ## Team Limitations
 - Balancing an intensive hackathon project + a week of courses, labs, and exams is difficult.
 - We are new to this and still learning! Even though we are familiar with JavaScript, designing and programming an entire REST API was a hard challenge.
-- The superbowl was one and the Patriots were playing 😅 (😭)
+- The superbowl was this weekend and the Patriots were playing 😅 (😭)
 
 ## Tech Details
 API is hosted on Heroku
+
 Database is privately hosted on Ethan Arrowood's personal server
-~Client is hosted on github pages~
+
